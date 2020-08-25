@@ -1,0 +1,18 @@
+version: "3.7"
+services:
+  filebeat:
+    container_name: filebeat
+    build: .
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      # named volume, this is used to persist filebeat data between restarts, so to avoid data duplication
+      - filebeat_data:/usr/share/filebeat/data
+      # needed to access all docker logs (read only)
+      - /var/lib/docker/containers/:/var/lib/docker/containers:ro
+      # needed to access additional informations about containers
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: on-failure
+
+volumes:
+  # create a persistent volume for Filebeat
+  filebeat_data:
